@@ -24,7 +24,7 @@ var (
 // AppModuleBasic defines the basic application module used by the wasm module.
 type AppModuleBasic struct{}
 
-// Name returns the wasm module's name.
+// Name returns the bank module's name.
 func (AppModuleBasic) Name() string {
 	return ModuleName
 }
@@ -58,12 +58,14 @@ func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router
 
 // GetTxCmd returns the root tx command for the wasm module.
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetTxCmd(cdc)
+	// TODO
+	// return cli.GetTxCmd(cdc)
 }
 
 // GetQueryCmd returns no root query command for the wasm module.
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetQueryCmd(cdc)
+	// TODO
+	// return cli.GetQueryCmd(cdc)
 }
 
 //____________________________________________________________________________

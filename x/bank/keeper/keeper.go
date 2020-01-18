@@ -14,11 +14,11 @@ import (
 
 // Keeper defines the governance module Keeper
 type Keeper struct {
-	// The reference to the Paramstore to get and set gov specific params
-	paramSpace types.ParamSubspace
+	// // The reference to the Paramstore to get and set gov specific params
+	// paramSpace types.ParamSubspace
 
-	// The SupplyKeeper to reduce the supply of the network
-	supplyKeeper types.SupplyKeeper
+	// // The SupplyKeeper to reduce the supply of the network
+	// supplyKeeper types.SupplyKeeper
 
 	// The baseBankKeeper that actually handles balances
 	sendKeeper sdkbank.SendKeeper
@@ -33,15 +33,14 @@ type Keeper struct {
 // NewKeeper returns a new centre-bank keeper.
 // CONTRACT: the parameter Subspace must have the param key table already initialized
 func NewKeeper(
-	cdc *codec.Codec, key sdk.StoreKey, paramSpace types.ParamSubspace,
-	supplyKeeper types.SupplyKeeper, sendKeeper sdkbank.SendKeeper, rtr types.Router,
+	cdc *codec.Codec, key sdk.StoreKey, sendKeeper sdkbank.SendKeeper,
 ) Keeper {
 	return Keeper{
-		storeKey:     key,
-		paramSpace:   paramSpace,
-		supplyKeeper: supplyKeeper,
-		sendKeeper:   sendKeeper,
-		cdc:          cdc,
+		storeKey: key,
+		// paramSpace:   paramSpace,
+		// supplyKeeper: supplyKeeper,
+		sendKeeper: sendKeeper,
+		cdc:        cdc,
 	}
 }
 
@@ -50,62 +49,86 @@ func (keeper Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// MINTERS
-
-func (keeper Keeper) GetMinters(ctx sdk.Context, denom string) (minters []types.Minter) {
+func (keeper Keeper) GetAuthorities(ctx sdk.Context, denom string, role types.AuthorityRole) (authorities []sdk.AccAddress) {
 	store := ctx.KVStore(keeper.storeKey)
-	bz := store.Get(types.GetMintersKey(denom))
+	bz := store.Get(types.GetRolesKey(denom, role))
 	if bz == nil {
-		return minters
+		return authorities
 	}
-	keeper.cdc.MustUnmarshalBinaryBare(bz, &minters)
-	return minters
+	keeper.cdc.MustUnmarshalBinaryBare(bz, &authorities)
+	return authorities
 }
 
-// CONTRACT:  minters allowance denoms must be equal to denom paramter
-func (keeper Keeper) SetMinters(ctx sdk.Context, denom string, minters []types.Minter) {
+func (keeper Keeper) SetAuthorities(ctx sdk.Context, denom string, role types.AuthorityRole, authorities []sdk.AccAddress) {
 	store := ctx.KVStore(keeper.storeKey)
-	if len(minters) == 0 {
-		store.Delete(types.GetMintersKey(denom))
+	if len(authorities) == 0 {
+		store.Delete(types.GetRolesKey(denom, role))
 		return
 	}
-	bz := keeper.cdc.MustMarshalBinaryBare(minters)
-	store.Set(types.GetMintersKey(denom), bz)
+	bz := keeper.cdc.MustMarshalBinaryBare(authorities)
+	store.Set(types.GetRolesKey(denom, role), bz)
 }
 
-func (keeper Keeper) UpdateMinter(ctx sdk.Context, minter sdk.AccAddress, allowance sdk.Coin) {
-	minters := keeper.GetMinters(ctx, allowance.Denom)
-
-	for i, existing := range minters {
-		if existing.Address.Equals(minter) {
-			minters[i].Allowance = allowance
-			keeper.SetMinters(ctx, allowance.Denom, minters)
-			return
+func (keeper Keeper) IsAuthority(ctx sdk.Context, denom string, role types.AuthorityRole, addr sdk.AccAddress) bool {
+	authorities := keeper.GetAuthorities(ctx, denom, role)
+	for _, existing := range authorities {
+		if existing.Equals(addr) {
+			return true
 		}
 	}
-
-	minters = append(minters, types.Minter{
-		Address:   minter,
-		Allowance: allowance,
-	})
-	keeper.SetMinters(ctx, allowance.Denom, minters)
+	return false
 }
 
-func (keeper Keeper) RemoveMinter(ctx sdk.Context, denom string, minter sdk.AccAddress) error {
-	minters := keeper.GetMinters(ctx, denom)
+func (keeper Keeper) AddAuthority(ctx sdk.Context, denom string, role types.AuthorityRole, addr sdk.AccAddress) error {
+	if keeper.IsAuthority(ctx, denom, role, addr) {
+		return sdkerrors.Wrapf(types.ErrAuthorityAlreadyExists, "%s - %s", role, addr)
+	}
+	authorities := keeper.GetAuthorities(ctx, denom, role)
+	authorities = append(authorities, addr)
+	keeper.SetAuthorities(ctx, denom, role, authorities)
+	return nil
+}
+
+func (keeper Keeper) RemoveAuthority(ctx sdk.Context, denom string, role types.AuthorityRole, addr sdk.AccAddress) error {
+	authorities := keeper.GetAuthorities(ctx, denom, role)
 	index := -1
-	for i, existing := range minters {
-		if existing.Address.Equals(minter) {
+	for i, existing := range authorities {
+		if existing.Equals(addr) {
 			index = i
 			break
 		}
 	}
 	if index == -1 {
-		return sdkerrors.Wrap(types.ErrInvalidMinter, minter.String())
+		return sdkerrors.Wrapf(types.ErrAuthorityInvalid, "%s - %s", role, addr)
 	}
 
-	minters[index] = minters[len(minters)-1]
-	minters = minters[:len(minters)-1]
+	authorities[index] = authorities[len(authorities)-1]
+	authorities = authorities[:len(authorities)-1]
+	keeper.SetAuthorities(ctx, denom, role, authorities)
 
-	keeper.SetMinters(ctx, denom, minters)
+	if role == types.Minter {
+		keeper.UpdateMinterAllowance(ctx, addr, sdk.NewInt64Coin(denom, 0))
+	}
+
+	return nil
+}
+
+func (keeper Keeper) GetMinterAllowance(ctx sdk.Context, denom string, addr sdk.AccAddress) (allowance sdk.Coin) {
+	store := ctx.KVStore(keeper.storeKey)
+	bz := store.Get(types.GetAllowancesKey(denom, addr))
+	if bz == nil {
+		return sdk.NewInt64Coin(denom, 0)
+	}
+	keeper.cdc.MustUnmarshalBinaryBare(bz, &allowance)
+	return allowance
+}
+
+func (keeper Keeper) UpdateMinterAllowance(ctx sdk.Context, addr sdk.AccAddress, allowance sdk.Coin) {
+	store := ctx.KVStore(keeper.storeKey)
+	if !allowance.IsValid() || allowance.IsZero() {
+		store.Delete(types.GetAllowancesKey(allowance.Denom, addr))
+		return
+	}
+	bz := keeper.cdc.MustMarshalBinaryBare(allowance)
+	store.Set(types.GetAllowancesKey(allowance.Denom, addr), bz)
 }

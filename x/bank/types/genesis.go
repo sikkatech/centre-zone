@@ -17,7 +17,13 @@ type AssetAuthoritySet struct {
 	Pausers       []sdk.AccAddress
 	BlackListers  []sdk.AccAddress
 	MasterMinters []sdk.AccAddress
-	Minters       []Minter
+	Minters       []GenMinter
+}
+
+// GenMinter
+type GenMinter struct {
+	Address   sdk.AccAddress
+	Allowance sdk.Coin
 }
 
 // NewGenesisState creates a new genesis state for the governance module

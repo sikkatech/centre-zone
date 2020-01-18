@@ -45,9 +45,9 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=usdc-zone \
-		  -X github.com/cosmos/cosmos-sdk/version.ServerName=usdc-node \
-		  -X github.com/cosmos/cosmos-sdk/version.ClientName=usdc-cli \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=centre-zone \
+		  -X github.com/cosmos/cosmos-sdk/version.ServerName=centred \
+		  -X github.com/cosmos/cosmos-sdk/version.ClientName=centrecli \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)"
@@ -65,19 +65,19 @@ all: install
 
 build: go.sum
 ifeq ($(OS),Windows_NT)
-	go build -mod=readonly $(BUILD_FLAGS) -o build/usdc-node.exe ./cmd/usdc-node
-	go build -mod=readonly $(BUILD_FLAGS) -o build/usdc-cli.exe ./cmd/usdc-cli
+	go build -mod=readonly $(BUILD_FLAGS) -o build/centred.exe ./cmd/centred
+	go build -mod=readonly $(BUILD_FLAGS) -o build/centrecli.exe ./cmd/centrecli
 else
-	go build -mod=readonly $(BUILD_FLAGS) -o build/usdc-node ./cmd/usdc-node
-	go build -mod=readonly $(BUILD_FLAGS) -o build/usdc-cli ./cmd/usdc-cli
+	go build -mod=readonly $(BUILD_FLAGS) -o build/centred ./cmd/centred
+	go build -mod=readonly $(BUILD_FLAGS) -o build/centrecli ./cmd/centrecli
 endif
 
 build-linux: go.sum
 	LEDGER_ENABLED=false GOOS=linux GOARCH=amd64 $(MAKE) build
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/usdc-node
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/usdc-cli
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/centred
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/centrecli
 
 ########################################
 ### Tools & dependencies
@@ -120,15 +120,15 @@ test:
 # This submits an AWS Batch job to run a lot of sims, each within a docker image. Results are uploaded to S3
 start-remote-sims:
 	# build the image used for running sims in, and tag it
-	docker build -f simulations/Dockerfile -t usdc-zone/usdc-zone-sim:master .
+	docker build -f simulations/Dockerfile -t centre-zone/centre-zone-sim:master .
 	# push that image to the hub
-	docker push usdc-zone/usdc-zone-sim:master
+	docker push centre-zone/centre-zone-sim:master
 	# submit an array job on AWS Batch, using 1000 seeds, spot instances
 	aws batch submit-job \
 		-—job-name "master-$(VERSION)" \
 		-—job-queue “simulation-1-queue-spot" \
 		-—array-properties size=1000 \
-		-—job-definition usdc-zone-sim-master \
+		-—job-definition centre-zone-sim-master \
 		-—container-override environment=[{SIM_NAME=master-$(VERSION)}]
 
 .PHONY: all build-linux install clean build test test-all start-remote-sims

@@ -1,10 +1,12 @@
 package types
 
-import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-)
+// AuthorityRole defines an role for different authority types
+type AuthorityRole string
 
-type Minter struct {
-	Address   sdk.AccAddress
-	Allowance sdk.Coin
-}
+const (
+	Minter       = AuthorityRole("minter")
+	MasterMinter = AuthorityRole("masterminter")
+	Pauser       = AuthorityRole("pauser")
+	Blacklister  = AuthorityRole("blacklister")
+	Admin        = AuthorityRole("admin")
+)

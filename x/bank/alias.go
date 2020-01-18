@@ -1,8 +1,8 @@
 // nolint
-package wasm
+package bank
 
 import (
-	"github.com/sikkatech/centre-zone/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/bank/internal/keeper"
 	"github.com/sikkatech/centre-zone/x/bank/types"
 )
 
@@ -20,57 +20,56 @@ const (
 	// QueryGetCode          = keeper.QueryGetCode
 	// QueryListCode         = keeper.QueryListCode
 	// DefaultCodespace      = types.DefaultCodespace
-	ModuleName            = types.ModuleName
-	StoreKey              = types.StoreKey
-	TStoreKey             = types.TStoreKey
-	QuerierRoute          = types.QuerierRoute
-	RouterKey             = types.RouterKey
+	ModuleName   = types.ModuleName
+	StoreKey     = types.StoreKey
+	TStoreKey    = types.TStoreKey
+	QuerierRoute = types.QuerierRoute
+	RouterKey    = types.RouterKey
 )
 
 var (
-	// functions aliases
-	// NewKeeper                 = keeper.NewKeeper
-	// NewQuerier                = keeper.NewQuerier
-	// MakeTestCodec             = keeper.MakeTestCodec
-	// CreateTestInput           = keeper.CreateTestInput
-	// RegisterCodec             = types.RegisterCodec
-	// ErrCreateFailed           = types.ErrCreateFailed
-	// ErrAccountExists          = types.ErrAccountExists
-	// ErrInstantiateFailed      = types.ErrInstantiateFailed
-	// ErrExecuteFailed          = types.ErrExecuteFailed
-	// ErrGasLimit               = types.ErrGasLimit
-	// ErrInvalidGenesis         = types.ErrInvalidGenesis
-	// GetCodeKey                = types.GetCodeKey
-	// GetContractAddressKey     = types.GetContractAddressKey
-	// GetContractStorePrefixKey = types.GetContractStorePrefixKey
-	// NewCodeInfo               = types.NewCodeInfo
-	// NewParams                 = types.NewParams
-	// NewWasmCoins              = types.NewWasmCoins
-	// NewContractInfo           = types.NewContractInfo
-	// CosmosResult              = types.CosmosResult
+// functions aliases
+// NewKeeper                 = keeper.NewKeeper
+// NewQuerier                = keeper.NewQuerier
+// MakeTestCodec             = keeper.MakeTestCodec
+// CreateTestInput           = keeper.CreateTestInput
+// RegisterCodec             = types.RegisterCodec
+// ErrCreateFailed           = types.ErrCreateFailed
+// ErrAccountExists          = types.ErrAccountExists
+// ErrInstantiateFailed      = types.ErrInstantiateFailed
+// ErrExecuteFailed          = types.ErrExecuteFailed
+// ErrGasLimit               = types.ErrGasLimit
+// ErrInvalidGenesis         = types.ErrInvalidGenesis
+// GetCodeKey                = types.GetCodeKey
+// GetContractAddressKey     = types.GetContractAddressKey
+// GetContractStorePrefixKey = types.GetContractStorePrefixKey
+// NewCodeInfo               = types.NewCodeInfo
+// NewParams                 = types.NewParams
+// NewWasmCoins              = types.NewWasmCoins
+// NewContractInfo           = types.NewContractInfo
+// CosmosResult              = types.CosmosResult
 
-	// // genesis aliases
-	// ValidateGenesis = types.ValidateGenesis
-	// InitGenesis     = keeper.InitGenesis
-	// ExportGenesis   = keeper.ExportGenesis
+// // genesis aliases
+// ValidateGenesis = types.ValidateGenesis
+// InitGenesis     = keeper.InitGenesis
+// ExportGenesis   = keeper.ExportGenesis
 
-	// // variable aliases
-	// ModuleCdc           = types.ModuleCdc
-	// KeyLastCodeID       = types.KeyLastCodeID
-	// KeyLastInstanceID   = types.KeyLastInstanceID
-	// CodeKeyPrefix       = types.CodeKeyPrefix
-	// ContractKeyPrefix   = types.ContractKeyPrefix
-	// ContractStorePrefix = types.ContractStorePrefix
+// // variable aliases
+// ModuleCdc           = types.ModuleCdc
+// KeyLastCodeID       = types.KeyLastCodeID
+// KeyLastInstanceID   = types.KeyLastInstanceID
+// CodeKeyPrefix       = types.CodeKeyPrefix
+// ContractKeyPrefix   = types.ContractKeyPrefix
+// ContractStorePrefix = types.ContractStorePrefix
 )
 
 type (
-	// Keeper                 = keeper.Keeper
-	// GetCodeResponse        = keeper.GetCodeResponse
-	// MsgStoreCode           = types.MsgStoreCode
-	// MsgInstantiateContract = types.MsgInstantiateContract
-	// MsgExecuteContract     = types.MsgExecuteContract
-	// CodeInfo               = types.CodeInfo
-	// ContractInfo           = types.ContractInfo
+	Keeper          = keeper.Keeper
+	
+	MsgMint         = types.MsgMint
+	MsgBurn         = types.MsgBurn
+	MsgUpdateMinter = types.MsgUpdateMinter
+	MsgRemoveMinter = types.MsgRemoveMinter
 
-	// GenesisState = types.GenesisState
+	GenesisState = types.GenesisState
 )

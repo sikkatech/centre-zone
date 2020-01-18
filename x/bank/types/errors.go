@@ -6,6 +6,7 @@ import (
 
 // x/wasm module errors
 var (
-	// ErrCreateFailed error for wasm code that has already been uploaded or failed
-	ErrInvalidMinter = sdkerrors.Register(ModuleName, 1, "minter not found")
+	// ErrAuthorityNotFound is for when an authority could not be found
+	ErrAuthorityInvalid       = sdkerrors.Register(ModuleName, 1, "authority invalid")
+	ErrAuthorityAlreadyExists = sdkerrors.Register(ModuleName, 2, "authority already exists")
 )

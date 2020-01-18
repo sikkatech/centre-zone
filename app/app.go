@@ -17,7 +17,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/bank"
+	centrebank "github.com/sikkatech/centre-zone/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
@@ -48,7 +48,7 @@ var (
 	ModuleBasics = module.NewBasicManager(
 		genutil.AppModuleBasic{},
 		auth.AppModuleBasic{},
-		bank.AppModuleBasic{},
+		centrebank.AppModuleBasic{},
 		staking.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		distr.AppModuleBasic{},
@@ -108,7 +108,7 @@ type CentreApp struct {
 
 	// keepers
 	accountKeeper  auth.AccountKeeper
-	bankKeeper     bank.Keeper
+	bankKeeper     centrebank.Keeper
 	supplyKeeper   supply.Keeper
 	stakingKeeper  staking.Keeper
 	slashingKeeper slashing.Keeper
@@ -157,7 +157,7 @@ func NewCentreApp(
 	// init params keeper and subspaces
 	app.paramsKeeper = params.NewKeeper(app.cdc, keys[params.StoreKey], tKeys[params.TStoreKey])
 	app.subspaces[auth.ModuleName] = app.paramsKeeper.Subspace(auth.DefaultParamspace)
-	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
+	// app.subspaces[centrebank.ModuleName] = app.paramsKeeper.Subspace(centrebank.DefaultParamspace)
 	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
 	app.subspaces[mint.ModuleName] = app.paramsKeeper.Subspace(mint.DefaultParamspace)
 	app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
@@ -170,7 +170,7 @@ func NewCentreApp(
 	app.accountKeeper = auth.NewAccountKeeper(
 		app.cdc, keys[auth.StoreKey], app.subspaces[auth.ModuleName], auth.ProtoBaseAccount,
 	)
-	app.bankKeeper = bank.NewBaseKeeper(
+	app.bankKeeper = centrebank.NewBaseKeeper(
 		app.accountKeeper, app.subspaces[bank.ModuleName], app.ModuleAccountAddrs(),
 	)
 	app.supplyKeeper = supply.NewKeeper(

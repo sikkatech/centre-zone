@@ -2,6 +2,8 @@ package types
 
 import (
 	"fmt"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
@@ -21,22 +23,10 @@ const (
 	RouterKey = ModuleName
 )
 
-func GetMintersKey(denom string) []byte {
-	return []byte(fmt.Sprintf("%s/minters", denom))
+func GetRolesKey(denom string, role AuthorityRole) []byte {
+	return []byte(fmt.Sprintf("roles/%s/%s", denom, role))
 }
 
-func GetMasterMintersKey(denom string) []byte {
-	return []byte(fmt.Sprintf("%s/masterminters", denom))
-}
-
-func GetBlacklistersKey(denom string) []byte {
-	return []byte(fmt.Sprintf("%s/blacklisters", denom))
-}
-
-func GetPausersKey(denom string) []byte {
-	return []byte(fmt.Sprintf("%s/pausers", denom))
-}
-
-func GetAdminsKey(denom string) []byte {
-	return []byte(fmt.Sprintf("%s/admins", denom))
+func GetAllowancesKey(denom string, addr sdk.AccAddress) []byte {
+	return append([]byte(fmt.Sprintf("allowances/%s/%s", denom)), addr.Bytes()...)
 }
