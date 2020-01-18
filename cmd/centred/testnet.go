@@ -48,14 +48,14 @@ func testnetCmd(ctx *server.Context, cdc *codec.Codec,
 
 	cmd := &cobra.Command{
 		Use:   "testnet",
-		Short: "Initialize files for a USDC-zone testnet",
+		Short: "Initialize files for a centre zone testnet",
 		Long: `testnet will create "v" number of directories and populate each with
 necessary files (private validator, genesis, config, etc.).
 
 Note, strict routability for addresses is turned off in the config file.
 
 Example:
-	usdc-node testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
+	centred testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			config := ctx.Config
@@ -80,9 +80,9 @@ Example:
 		"Directory to store initialization data for the testnet")
 	cmd.Flags().String(flagNodeDirPrefix, "node",
 		"Prefix the directory name for each node with (node results in node0, node1, ...)")
-	cmd.Flags().String(flagNodeDaemonHome, "usdc-node",
+	cmd.Flags().String(flagNodeDaemonHome, "centred",
 		"Home directory of the node's daemon configuration")
-	cmd.Flags().String(flagNodeCLIHome, "usdc-cli",
+	cmd.Flags().String(flagNodeCLIHome, "centrecli",
 		"Home directory of the node's cli configuration")
 	cmd.Flags().String(flagStartingIPAddress, "192.168.0.1",
 		"Starting IP address (192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)")
@@ -111,8 +111,8 @@ func InitTestnet(cmd *cobra.Command, config *tmconfig.Config, cdc *codec.Codec,
 	nodeIDs := make([]string, numValidators)
 	valPubKeys := make([]crypto.PubKey, numValidators)
 
-	usdcConfig := srvconfig.DefaultConfig()
-	usdcConfig.MinGasPrices = minGasPrices
+	centreConfig := srvconfig.DefaultConfig()
+	centreConfig.MinGasPrices = minGasPrices
 
 	//nolint:prealloc
 	var (
@@ -224,8 +224,8 @@ func InitTestnet(cmd *cobra.Command, config *tmconfig.Config, cdc *codec.Codec,
 
 		// TODO: Rename config file to server.toml as it's not particular to USDC
 		// (REF: https://github.com/cosmos/cosmos-sdk/issues/4125).
-		usdcConfigFilePath := filepath.Join(nodeDir, "config/usdc-node.toml")
-		srvconfig.WriteConfigFile(usdcConfigFilePath, usdcConfig)
+		centreConfigFilePath := filepath.Join(nodeDir, "config/centred.toml")
+		srvconfig.WriteConfigFile(centreConfigFilePath, centreConfig)
 	}
 
 	if err := initGenFiles(cdc, mbm, chainID, genAccounts, genFiles, numValidators); err != nil {

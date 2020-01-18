@@ -13,8 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 )
 
-// ExportAppStateAndValidators export the state of usdc-node for a genesis file
-func (app *UsdcApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string,
+// ExportAppStateAndValidators export the state of centred for a genesis file
+func (app *CentreApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string,
 ) (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
 	// as if they could withdraw from the start of the next block
 	ctx := app.NewContext(true, abci.Header{Height: app.LastBlockHeight()})
@@ -35,7 +35,7 @@ func (app *UsdcApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteLis
 // prepare for fresh start at zero height
 // NOTE zero height genesis is a temporary feature which will be deprecated
 //      in favour of export at a block height
-func (app *UsdcApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []string) {
+func (app *CentreApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []string) {
 	applyWhiteList := false
 
 	//Check if there is a whitelist

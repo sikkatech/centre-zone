@@ -24,7 +24,7 @@ import (
 	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/sikkatech/usdc-zone/app"
+	"github.com/sikkatech/centre-zone/app"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	config.SetBech32PrefixForAccount(sdk.Bech32PrefixAccAddr, sdk.Bech32PrefixAccPub)
 	config.SetBech32PrefixForValidator(sdk.Bech32PrefixValAddr, sdk.Bech32PrefixValPub)
 	config.SetBech32PrefixForConsensusNode(sdk.Bech32PrefixConsAddr, sdk.Bech32PrefixConsPub)
-	config.SetKeyringServiceName("usdc")
+	config.SetKeyringServiceName("centre")
 	config.Seal()
 
 	// TODO: setup keybase, viper object, etc. to be passed into
@@ -47,8 +47,8 @@ func main() {
 	// with the cdc
 
 	rootCmd := &cobra.Command{
-		Use:   "usdc-cli",
-		Short: "Command line interface for interacting with usdc-node",
+		Use:   "centrecli",
+		Short: "Command line interface for interacting with centred",
 	}
 
 	// Add --chain-id to persistent flags and mark it required
@@ -73,7 +73,7 @@ func main() {
 	)
 
 	// Add flags and prefix all env exposed with GA
-	executor := cli.PrepareMainCmd(rootCmd, "USDC", app.DefaultCLIHome)
+	executor := cli.PrepareMainCmd(rootCmd, "CENTRE", app.DefaultCLIHome)
 
 	err := executor.Execute()
 	if err != nil {

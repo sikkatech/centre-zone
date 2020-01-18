@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// Bech32MainPrefix is the primary bech32 prefix that distinguishes usdc chain addresses
+// Bech32MainPrefix is the primary bech32 prefix that distinguishes centre chain addresses
 const Bech32MainPrefix = "usdc"
 
 // SetBech32AddressPrefixes sets the bech32 prefixes for accounts, validators, and consensus addresses

@@ -34,13 +34,13 @@ import (
 )
 
 const (
-	appName = "usdc-zone"
+	appName = "centre"
 )
 
 var (
 	// default home directories for expected binaries
-	DefaultCLIHome  = os.ExpandEnv("$HOME/.usdc-cli")
-	DefaultNodeHome = os.ExpandEnv("$HOME/.usdc-node")
+	DefaultCLIHome  = os.ExpandEnv("$HOME/.centrecli")
+	DefaultNodeHome = os.ExpandEnv("$HOME/.centred")
 
 	// ModuleBasics The module BasicManager is in charge of setting up basic,
 	// non-dependant module elements, such as codec registration
@@ -90,10 +90,10 @@ func RegisterCodec(cdc *codec.Codec) {
 }
 
 // Verify app interface at compile time
-var _ simapp.App = (*UsdcApp)(nil)
+var _ simapp.App = (*CentreApp)(nil)
 
-// UsdcApp extended ABCI application
-type UsdcApp struct {
+// CentreApp extended ABCI application
+type CentreApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
 
@@ -127,11 +127,11 @@ type UsdcApp struct {
 	sm *module.SimulationManager
 }
 
-// NewUsdcApp returns a reference to an initialized UsdcApp.
-func NewUsdcApp(
+// NewCentreApp returns a reference to an initialized CentreApp.
+func NewCentreApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
 	invCheckPeriod uint, skipUpgradeHeights map[int64]bool, baseAppOptions ...func(*bam.BaseApp),
-) *UsdcApp {
+) *CentreApp {
 
 	cdc := MakeCodec()
 
@@ -145,7 +145,7 @@ func NewUsdcApp(
 	)
 	tKeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
-	app := &UsdcApp{
+	app := &CentreApp{
 		BaseApp:        bApp,
 		cdc:            cdc,
 		invCheckPeriod: invCheckPeriod,
@@ -295,20 +295,20 @@ func NewUsdcApp(
 }
 
 // Name returns the name of the App
-func (app *UsdcApp) Name() string { return app.BaseApp.Name() }
+func (app *CentreApp) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block
-func (app *UsdcApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *CentreApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker application updates every end block
-func (app *UsdcApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *CentreApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // InitChainer application update at chain initialization
-func (app *UsdcApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *CentreApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState simapp.GenesisState
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
@@ -316,12 +316,12 @@ func (app *UsdcApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci
 }
 
 // LoadHeight loads a particular height
-func (app *UsdcApp) LoadHeight(height int64) error {
+func (app *CentreApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *UsdcApp) ModuleAccountAddrs() map[string]bool {
+func (app *CentreApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[supply.NewModuleAddress(acc).String()] = true
@@ -331,12 +331,12 @@ func (app *UsdcApp) ModuleAccountAddrs() map[string]bool {
 }
 
 // Codec returns the application's sealed codec.
-func (app *UsdcApp) Codec() *codec.Codec {
+func (app *CentreApp) Codec() *codec.Codec {
 	return app.cdc
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *UsdcApp) SimulationManager() *module.SimulationManager {
+func (app *CentreApp) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
